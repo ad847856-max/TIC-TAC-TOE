@@ -1,0 +1,734 @@
+
+:root {
+  --bg1: #071022;
+  --bg2: #0b2540;
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-edge: rgba(255, 255, 255, 0.18);
+  --x-color: #7ee7d9;
+  --o-color: #ff9d7a;
+  --ink: #eaf3f5;
+  --muted: #9fb3c0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 15%, #113355, transparent 40%),
+    radial-gradient(circle at 85% 80%, #14405c, transparent 45%),
+    linear-gradient(160deg, var(--bg1), var(--bg2));
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  padding: 30px 20px;
+}
+
+/* BACKGROUND EFFECTS */
+
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(65px);
+  opacity: 0.3;
+  z-index: 0;
+  pointer-events: none;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+
+.blob.a {
+  width: 350px;
+  height: 350px;
+  background: var(--x-color);
+  top: -100px;
+  left: -100px;
+}
+
+.blob.b {
+  width: 400px;
+  height: 400px;
+  background: var(--o-color);
+  bottom: -150px;
+  right: -100px;
+  animation-delay: -5s;
+}
+
+.blob.c {
+  width: 260px;
+  height: 260px;
+  background: #5b8dee;
+  top: 40%;
+  left: 45%;
+  animation-delay: -8s;
+}
+
+@keyframes drift {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(35px, -30px);
+  }
+}
+
+/* MAIN TWO-COLUMN LAYOUT */
+
+.game-layout {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1050px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(30px, 6vw, 80px);
+}
+
+.game-panel {
+  width: min(100%, 390px);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+h1 {
+  text-align: center;
+  font-size: clamp(27px, 3.5vw, 36px);
+  letter-spacing: 0.3px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+h1 span {
+  color: var(--x-color);
+}
+
+/* GAME STATUS */
+
+.status {
+  min-height: 28px;
+  font-size: 18px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.status.win {
+  color: #ffe49a;
+  font-weight: bold;
+}
+
+/* TIC TAC TOE BOARD */
+
+.board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: min(88vw, 350px);
+  aspect-ratio: 1 / 1;
+  padding: 14px;
+  border-radius: 26px;
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.cell {
+  min-width: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  cursor: pointer;
+  overflow: hidden;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.cell:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.cell:active {
+  transform: scale(0.95);
+}
+
+.cell.filled {
+  cursor: default;
+}
+
+.cell.filled:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.cell svg {
+  width: 56%;
+  height: 56%;
+  overflow: visible;
+}
+
+.cell .mark-path {
+  fill: none;
+  stroke-width: 11;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cell.x .mark-path {
+  stroke: var(--x-color);
+  filter: drop-shadow(0 0 10px rgba(126, 231, 217, 0.55));
+}
+
+.cell.o .mark-path {
+  stroke: var(--o-color);
+  filter: drop-shadow(0 0 10px rgba(255, 157, 122, 0.55));
+}
+
+.cell.win {
+  animation: pulse 0.9s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.08);
+  }
+}
+
+.draw-path {
+  stroke-dasharray: 201;
+  stroke-dashoffset: 201;
+  animation: draw 0.35s ease forwards;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* WINNING LINE */
+
+.winline {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  height: 6px;
+  left: 0;
+  top: 0;
+  width: 0;
+  opacity: 0;
+  border-radius: 5px;
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--x-color), var(--o-color));
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.5);
+}
+
+.winline.show {
+  animation: appear 0.4s ease forwards;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: scaleX(0) rotate(var(--rot, 0deg));
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1) rotate(var(--rot, 0deg));
+  }
+}
+
+/* BUTTON */
+
+.controls {
+  display: flex;
+  justify-content: center;
+}
+
+button.reset {
+  padding: 12px 25px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-edge);
+  background: var(--glass);
+  color: var(--ink);
+  font-size: 15px;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: background 0.2s, transform 0.15s;
+}
+
+button.reset:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+button.reset:active {
+  transform: scale(0.96);
+}
+
+/* SCOREBOARD */
+
+.score {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.score b {
+  color: var(--ink);
+}
+
+/* RIGHT-SIDE WINNER CELEBRATION */
+
+.celebration {
+  display: none;
+  width: 300px;
+  flex-shrink: 0;
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.celebration.show {
+  display: block;
+  animation: celebration-pop 0.5s ease both;
+}
+
+.celebration h2 {
+  color: #ffe49a;
+  font-size: clamp(21px, 2.5vw, 27px);
+  line-height: 1.4;
+  text-shadow: 0 0 20px rgba(255, 228, 154, 0.25);
+}
+
+.victory-text {
+  color: var(--x-color);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.victory-subtext {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* ANIME CHARACTER */
+
+.anime-dancer {
+  position: relative;
+  width: 220px;
+  height: 255px;
+  margin: 18px auto;
+  transform-origin: center bottom;
+  animation: anime-bounce 0.48s ease-in-out infinite alternate;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.25));
+}
+
+/* Spiky golden hair */
+
+.anime-hair {
+  position: absolute;
+  z-index: 3;
+  left: 76px;
+  top: 22px;
+  width: 72px;
+  height: 48px;
+  background: #ffc83d;
+  clip-path: polygon(
+    0 50%, 4% 12%, 23% 31%, 32% 0,
+    49% 25%, 70% 0, 75% 30%, 100% 12%,
+    92% 67%, 80% 100%, 15% 100%
+  );
+  filter: drop-shadow(0 0 5px rgba(255, 200, 61, 0.4));
+}
+
+.hair-spike {
+  position: absolute;
+  width: 25px;
+  height: 32px;
+  background: #ffc83d;
+  left: 22px;
+  top: -13px;
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+}
+
+/* Head and face */
+
+.anime-head {
+  position: absolute;
+  z-index: 2;
+  left: 84px;
+  top: 45px;
+  width: 58px;
+  height: 63px;
+  border: 2px solid #965b43;
+  border-radius: 45% 45% 48% 48%;
+  background: #ffd1a8;
+}
+
+.headband {
+  position: absolute;
+  z-index: 4;
+  left: 79px;
+  top: 48px;
+  width: 68px;
+  height: 15px;
+  background: #344762;
+  border: 2px solid #8da8bd;
+  border-radius: 4px;
+  color: #dbeaf3;
+  font-size: 12px;
+  line-height: 11px;
+}
+
+.headband span {
+  display: block;
+  text-align: center;
+}
+
+.anime-eye {
+  position: absolute;
+  top: 29px;
+  width: 7px;
+  height: 9px;
+  border-radius: 50%;
+  background: #342a45;
+}
+
+.anime-eye.left {
+  left: 12px;
+}
+
+.anime-eye.right {
+  right: 12px;
+}
+
+.anime-cheek {
+  position: absolute;
+  top: 40px;
+  width: 10px;
+  height: 5px;
+  border-radius: 50%;
+  background: #f49a93;
+  opacity: 0.8;
+}
+
+.anime-cheek.left {
+  left: 4px;
+}
+
+.anime-cheek.right {
+  right: 4px;
+}
+
+.anime-smile {
+  position: absolute;
+  left: 22px;
+  top: 39px;
+  width: 13px;
+  height: 9px;
+  border-bottom: 3px solid #a84d52;
+  border-radius: 0 0 50% 50%;
+}
+
+/* Neck and orange jacket */
+
+.anime-neck {
+  position: absolute;
+  left: 104px;
+  top: 101px;
+  width: 18px;
+  height: 18px;
+  background: #ffd1a8;
+  z-index: 1;
+}
+
+.anime-body {
+  position: absolute;
+  left: 75px;
+  top: 112px;
+  width: 78px;
+  height: 78px;
+  border: 2px solid #27334d;
+  border-radius: 18px 18px 9px 9px;
+  background: linear-gradient(
+    90deg,
+    #ff914d 0%,
+    #ff914d 48%,
+    #263653 49%,
+    #263653 100%
+  );
+  z-index: 2;
+}
+
+.jacket-zip {
+  position: absolute;
+  left: 35px;
+  top: 0;
+  width: 3px;
+  height: 72px;
+  background: #e9e9ef;
+}
+
+/* Arms move up and down */
+
+.anime-arm {
+  position: absolute;
+  top: -2px;
+  width: 48px;
+  height: 17px;
+  border: 8px solid #ffd1a8;
+  border-radius: 15px;
+  background: #263653;
+}
+
+.anime-arm.left {
+  left: -38px;
+  transform-origin: right center;
+  transform: rotate(-55deg);
+  animation: arm-left 0.48s ease-in-out infinite alternate;
+}
+
+.anime-arm.right {
+  right: -38px;
+  transform-origin: left center;
+  transform: rotate(55deg);
+  animation: arm-right 0.48s ease-in-out infinite alternate;
+}
+
+/* Hands */
+
+.anime-hand {
+  position: absolute;
+  top: -34px;
+  width: 20px;
+  height: 20px;
+  background: #ffd1a8;
+  border: 2px solid #965b43;
+  border-radius: 50%;
+}
+
+.anime-hand.left {
+  left: -45px;
+}
+
+.anime-hand.right {
+  right: -45px;
+}
+
+/* Legs */
+
+.anime-leg {
+  position: absolute;
+  top: 67px;
+  width: 20px;
+  height: 44px;
+  background: #263653;
+  border: 2px solid #18253a;
+  border-radius: 10px;
+  transform-origin: top center;
+}
+
+.anime-leg.left {
+  left: 9px;
+  transform: rotate(20deg);
+  animation: leg-left 0.48s ease-in-out infinite alternate;
+}
+
+.anime-leg.right {
+  right: 9px;
+  transform: rotate(-20deg);
+  animation: leg-right 0.48s ease-in-out infinite alternate;
+}
+
+.anime-shoe {
+  position: absolute;
+  top: 105px;
+  width: 29px;
+  height: 13px;
+  background: #101a2d;
+  border-radius: 12px 12px 5px 5px;
+}
+
+.anime-shoe.left {
+  left: 0;
+  transform: rotate(-15deg);
+}
+
+.anime-shoe.right {
+  right: 0;
+  transform: rotate(15deg);
+}
+
+/* Sparkles around the character */
+
+.spark {
+  position: absolute;
+  z-index: 5;
+  color: #ffe49a;
+  font-size: 29px;
+  text-shadow: 0 0 15px rgba(255, 228, 154, 0.6);
+  animation: sparkle 0.8s ease-in-out infinite alternate;
+}
+
+.spark-one {
+  left: 20px;
+  top: 45px;
+}
+
+.spark-two {
+  right: 18px;
+  top: 80px;
+  animation-delay: 0.2s;
+}
+
+.spark-three {
+  right: 25px;
+  top: 15px;
+  animation-delay: 0.4s;
+}
+
+.spark-four {
+  left: 28px;
+  top: 135px;
+  animation-delay: 0.3s;
+}
+
+/* ANIMATION KEYFRAMES */
+
+@keyframes anime-bounce {
+  from {
+    transform: translateY(5px) rotate(-3deg);
+  }
+  to {
+    transform: translateY(-10px) rotate(3deg);
+  }
+}
+
+@keyframes arm-left {
+  from {
+    transform: rotate(-65deg);
+  }
+  to {
+    transform: rotate(-20deg);
+  }
+}
+
+@keyframes arm-right {
+  from {
+    transform: rotate(65deg);
+  }
+  to {
+    transform: rotate(20deg);
+  }
+}
+
+@keyframes leg-left {
+  from {
+    transform: rotate(25deg);
+  }
+  to {
+    transform: rotate(-12deg);
+  }
+}
+
+@keyframes leg-right {
+  from {
+    transform: rotate(-25deg);
+  }
+  to {
+    transform: rotate(12deg);
+  }
+}
+
+@keyframes sparkle {
+  from {
+    transform: scale(0.7) rotate(-15deg);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1.2) rotate(15deg);
+    opacity: 1;
+  }
+}
+
+@keyframes celebration-pop {
+  from {
+    opacity: 0;
+    transform: translateX(20px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* TABLET AND MOBILE LAYOUT */
+
+@media (max-width: 760px) {
+  body {
+    align-items: flex-start;
+    padding: 24px 12px;
+  }
+
+  .game-layout {
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .game-panel {
+    width: 100%;
+    gap: 18px;
+  }
+
+  .celebration {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .anime-dancer {
+    margin: 12px auto;
+  }
+
+  .board {
+    width: min(88vw, 350px);
+  }
+
+  .score {
+    gap: 12px;
+  }
+}
+
+/* Reduce movement if requested in device settings */
+
+@media (prefers-reduced-motion: reduce) {
+  .blob,
+  .cell.win,
+  .celebration,
+  .anime-dancer,
+  .anime-arm,
+  .anime-leg,
+  .spark {
+    animation: none;
+  }
+}

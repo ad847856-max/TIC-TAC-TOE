@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquid Tic-Tac-Toe</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Animated background -->
+  <div class="blob a"></div>
+  <div class="blob b"></div>
+  <div class="blob c"></div>
+
+  <main class="game-layout">
+
+    <!-- LEFT SIDE: GAME -->
+    <section class="game-panel">
+      <h1><span>Liquid</span> Tic-Tac-Toe</h1>
+
+      <div class="status" id="status">Turn: X</div>
+
+      <div class="board" id="board">
+        <!-- JavaScript creates the nine cells -->
+        <div class="winline" id="winline"></div>
+      </div>
+
+      <div class="controls">
+        <button class="reset" id="resetBtn">New Round</button>
+      </div>
+
+      <div class="score">
+        <span>X wins: <b id="scoreX">0</b></span>
+        <span>Draws: <b id="scoreD">0</b></span>
+        <span>O wins: <b id="scoreO">0</b></span>
+      </div>
+    </section>
+
+    <!-- RIGHT SIDE: WINNER CELEBRATION -->
+    <section class="celebration" id="celebration" aria-live="polite">
+
+      <h2 id="winnerMessage">🎉 Player X Wins! 🎉</h2>
+
+      <div class="anime-dancer" role="img"
+           aria-label="Dancing anime-style character">
+
+        <div class="anime-hair">
+          <span class="hair-spike"></span>
+        </div>
+
+        <div class="headband">
+          <span>✦</span>
+        </div>
+
+        <div class="anime-head">
+          <span class="anime-eye left"></span>
+          <span class="anime-eye right"></span>
+          <span class="anime-cheek left"></span>
+          <span class="anime-cheek right"></span>
+          <span class="anime-smile"></span>
+        </div>
+
+        <div class="anime-neck"></div>
+
+        <div class="anime-body">
+          <div class="jacket-zip"></div>
+          <span class="anime-arm left"></span>
+          <span class="anime-arm right"></span>
+          <span class="anime-hand left"></span>
+          <span class="anime-hand right"></span>
+          <span class="anime-leg left"></span>
+          <span class="anime-leg right"></span>
+          <span class="anime-shoe left"></span>
+          <span class="anime-shoe right"></span>
+        </div>
+
+        <span class="spark spark-one">✦</span>
+        <span class="spark spark-two">✧</span>
+        <span class="spark spark-three">♪</span>
+        <span class="spark spark-four">★</span>
+      </div>
+
+      <p class="victory-text">VICTORY DANCE!</p>
+      <p class="victory-subtext">You nailed it! ✨</p>
+
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
